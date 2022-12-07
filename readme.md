@@ -18,3 +18,5 @@ and check the result with:
 ```
 
 … but it is more meant to be a documentation and one can install the same everywhere.
+
+The image is based un Ubuntu `22.04` and uses Python `3.10`. There is an alternative image based on the Red Hat Universal Base Images (UBI) `9` and Python `3.9` in the `Dockerfile.redhat` file.

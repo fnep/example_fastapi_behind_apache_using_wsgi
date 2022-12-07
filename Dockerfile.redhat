@@ -1,0 +1,23 @@
+FROM redhat/ubi9
+
+# Install Python3, Apache, and mod_wsgi
+RUN yum install -y python3-pip python3-mod_wsgi
+
+# Activate the mod_wsgi
+RUN echo "LoadModule wsgi_module modules/mod_wsgi_python3.so" >> /etc/httpd/conf.modules.d/00-base.conf
+
+# Add the apache VirtualHost, to setup the WSGI module for the app
+COPY apache-vhost.conf /etc/httpd/conf.d/vhost.conf
+
+# Optional: Redirect error log to stdout, to make it visible in `docker compose up` output
+RUN ln -sf /dev/stdout /var/log/httpd/error_log
+
+# Install FastAPI and the WSGIMiddleware
+RUN python3 -m venv /var/www/html/.venv && \
+    /var/www/html/.venv/bin/python3 -m pip install fastapi a2wsgi
+
+# Add the FastAPI application
+COPY main.py /var/www/html/
+RUN chown -R apache:apache /var/www/html
+
+CMD ["httpd", "-D", "FOREGROUND"]
